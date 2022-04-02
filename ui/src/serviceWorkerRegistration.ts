@@ -23,8 +23,23 @@ type Config = {
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
 };
 
+// IWC (InterWorker Communicator)
+const channel = new MessageChannel();
+channel.port1.onmessage = (e: MessageEvent) => {
+  console.log(">>>", e.data)
+}
+
+const registerChannelForMain = (navigator: Navigator) => {
+  navigator.serviceWorker.controller?.postMessage({
+    type: 'MAIN_THREAD',
+  }, [channel.port2]);
+}
+
 export function register(config?: Config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  console.log("Working");
+  
+  // process.env.NODE_ENV === 'production'
+  if ('serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
@@ -35,7 +50,11 @@ export function register(config?: Config) {
     }
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      const swFileName = process.env.NODE_ENV === 'production' 
+        ? 'service-worker.ts' 
+        : 'custom-sw.js'
+
+      const swUrl = `${process.env.PUBLIC_URL}/${swFileName}`;
 
       if (isLocalhost) {
         // This is running on localhost. Let's check if a service worker still exists or not.
@@ -44,6 +63,7 @@ export function register(config?: Config) {
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
         navigator.serviceWorker.ready.then(() => {
+          registerChannelForMain(navigator);
           console.log(
             'This web app is being served cache-first by a service ' +
               'worker. To learn more, visit https://cra.link/PWA'
@@ -76,6 +96,8 @@ function registerValidSW(swUrl: string, config?: Config) {
                 'New content is available and will be used when all ' +
                   'tabs for this page are closed. See https://cra.link/PWA.'
               );
+
+
 
               // Execute callback
               if (config && config.onUpdate) {
