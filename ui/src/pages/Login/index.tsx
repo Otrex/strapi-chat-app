@@ -1,21 +1,29 @@
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-import { LocationState } from "../../types";
+import useForm from "../../hooks/useForm";
+import useStore from "../../hooks/useStore";
+import { LocationState, LoginRequest } from "../../types";
+
+
+
 
 const Login = () => {
-  let navigate = useNavigate();
-  let location = useLocation();
-  let auth = useAuth();
+  const initialForm = (): LoginRequest => ({
+    email: '',
+    password: ''
+  });
 
-  let from = (location.state as LocationState)?.from?.pathname || "/";
+  const [form, setField] = useForm(initialForm());
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {auth} = useStore();
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const from = (location.state as LocationState)?.from?.pathname || "/";
+
+  function handleSubmit(event: React.FormEvent<HTMLButtonElement>) {
     event.preventDefault();
-
-    let formData = new FormData(event.currentTarget);
-    let username = formData.get("username") as string;
-
-    auth.signin(username, () => {
+    
+    auth.signin(form, () => {
       // Send them back to the page they tried to visit when they were
       // redirected to the login page. Use { replace: true } so we don't create
       // another entry in the history stack for the login page.  This means that
@@ -31,16 +39,16 @@ const Login = () => {
           <h1>Sign-In</h1>
           <div className="input">
             <label> Email </label>
-            <input type="text" />
+            <input type="text" onChange={setField('email')}/>
           </div>
           <div className="input">
             <label> Password </label>
-            <input type="password" />
+            <input type="password" onChange={setField('password')}/>
           </div>
           <div className="input">
             <input type="checkbox"/> By checking this, you have accepted our Terms & conditions
           </div>
-          <button className="submit"> Sign-In </button>
+          <button className="submit" onClick={handleSubmit}> Sign-In </button>
           <p className="text-center">Powered By Rex</p>
         </div>
         <p className="text-center"><a href="/register">Click to Register</a></p>

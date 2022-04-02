@@ -1,8 +1,8 @@
 import { Navigate, useLocation } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import useStore from "../../hooks/useStore";
 
-export default ({ children }: { children: JSX.Element }) => {
-  let auth = useAuth();
+const Protect = ({ children }: { children: JSX.Element }) => {
+  let { auth } = useStore();
   let location = useLocation();
 
   if (!auth.user) {
@@ -15,3 +15,5 @@ export default ({ children }: { children: JSX.Element }) => {
 
   return children;
 }
+
+export default Protect;

@@ -1,5 +1,8 @@
 import React from "react";
-import { AuthContext } from "../hooks/useAuth";
+import api from "../api";
+import { StoreContext } from "../hooks/useStore";
+import { LoginRequest, LoginResponse, VoidFunction } from "../types";
+import { IUser } from "../types/models";
 
 const fakeAuthProvider = {
   isAuthenticated: false,
@@ -13,24 +16,59 @@ const fakeAuthProvider = {
   },
 };
 
-export default ({ children }: { children: React.ReactNode }) => {
-  let [user, setUser] = React.useState<any>(null);
+const Provider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = React.useState<IUser| null>(null);
+  const [users, setUsers] = React.useState<IUser[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-  let signin = (newUser: string, callback: VoidFunction) => {
-    return fakeAuthProvider.signin(() => {
-      setUser(newUser);
-      callback();
-    });
+  const toggleLoading = (key: boolean) => {
+    setLoading(() => key)
   };
 
-  let signout = (callback: VoidFunction) => {
+  const signin = (data: LoginRequest, callback: VoidFunction) => {
+    toggleLoading(true);
+    return api.login(data).then((data) => {
+      api.saveToken(data.jwt);
+      setUser(data.data);
+      toggleLoading(true);
+      callback();
+    })
+    .catch((err: any) => {
+      alert(err.message)
+    })
+    .finally(()=> {
+      toggleLoading(true);
+    })
+  };
+
+  const register = (data: any, callback: VoidFunction) => {
+    return
+  }
+
+  const signout = (callback: VoidFunction) => {
     return fakeAuthProvider.signout(() => {
       setUser(null);
       callback();
     });
   };
 
-  let value = { user, signin, signout };
+  const loadState = {
+    loading,
+    toggleLoading
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const auth = {
+    user,
+    signin,
+    signout,
+    register 
+  };
+
+  const store = {
+    loadState,
+    auth
+  }
+
+  return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 }
+export default Provider;
