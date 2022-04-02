@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import { LocationState } from "../../types";
 
-const Login = () => {
+const Register = () => {
   let navigate = useNavigate();
   let location = useLocation();
   let auth = useAuth();
@@ -28,7 +28,7 @@ const Login = () => {
     return (
       <div className="h-vh-full w-full bg-auth abs-center-content">
         <div className="bg-white auth view-port">
-          <h1>Sign-In</h1>
+          <h1>Create an Account</h1>
           <div className="input">
             <label> Email </label>
             <input type="text" />
@@ -40,13 +40,13 @@ const Login = () => {
           <div className="input">
             <input type="checkbox"/> By checking this, you have accepted our Terms & conditions
           </div>
-          <button className="submit"> Sign-In </button>
+          <button className="submit"> Register </button>
           <p className="text-center">Powered By Rex</p>
         </div>
-        <p className="text-center"><a href="/register">Click to Register</a></p>
+        <p className="text-center"><a href="/login">Click to SignIn</a></p>
 
       </div>
     );
 }
 
-export default Login;
+export default Register;
