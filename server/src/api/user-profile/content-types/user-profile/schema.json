@@ -4,22 +4,20 @@
   "info": {
     "singularName": "user-profile",
     "pluralName": "user-profiles",
-    "displayName": "user_profile"
+    "displayName": "images",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "useImage": {
+    "getImage": {
       "allowedTypes": [
         "images"
       ],
       "type": "media",
       "multiple": false
-    },
-    "is_online": {
-      "type": "boolean"
     }
   }
 }

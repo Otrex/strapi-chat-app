@@ -80,6 +80,13 @@
       "relation": "oneToMany",
       "target": "api::chat.chat",
       "mappedBy": "sender"
+    },
+    "image_field": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
