@@ -15,7 +15,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "user_notification_key"
+      "mappedBy": "user_notification_key"
     },
     "subscription": {
       "type": "json"
