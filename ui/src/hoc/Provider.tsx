@@ -79,7 +79,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       setReciepient(reciepient);
     },
     getOnlineReciepients: () => {},
-    sendMessage: (message: string) => {},
+    sendMessage: (message: string) => { alert(message)},
     getChats: () => {},
   };
 
