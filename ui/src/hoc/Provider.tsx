@@ -1,36 +1,107 @@
-import React from "react";
-import { AuthContext } from "../hooks/useAuth";
+import React, { useState } from "react";
+import api from "../api";
+import { StoreContext } from "../hooks/useStore";
+import { LoginRequest, VoidFunction } from "../types";
+import { IMessage, IUser } from "../types/models";
+export const channel = new MessageChannel();
 
-const fakeAuthProvider = {
-  isAuthenticated: false,
-  signin(callback: VoidFunction) {
-    fakeAuthProvider.isAuthenticated = true;
-    setTimeout(callback, 100); // fake async
+const sampleUser = { name: "Treasure", phoneNumber: "098765456789" };
+const sampleReciepients = [
+  { name: "Trex", phoneNumber: "098765456789" },
+  { name: "Ben", phoneNumber: "098765456789" },
+  { name: "Lenon", phoneNumber: "098765456789" },
+];
+
+const sampleMessages: IMessage[] = [
+  {
+    message: "Hi its me",
+    sender: sampleUser,
+    createdAt: new Date(),
   },
-  signout(callback: VoidFunction) {
-    fakeAuthProvider.isAuthenticated = false;
-    setTimeout(callback, 100);
+  {
+    message: "Hi its me",
+    sender: sampleReciepients[0],
+    createdAt: new Date(),
   },
+];
+
+type UIUser = IUser | undefined;
+type NIUser = IUser | null;
+
+const Provider = ({ children }: { children: React.ReactNode }) => {
+  const [currentReciepient, setReciepient] = useState<UIUser>();
+  const [reciepients, setReciepients] = useState<IUser[]>(sampleReciepients);
+  const [chats, setChats] = useState<IMessage[]>(sampleMessages);
+  const [user, setUser] = useState<NIUser>(sampleUser);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // setInterval(() => {
+  //   setChats((data) => ([...data, sampleMessages[Math.floor(Math.random() * 2)]]))
+  // }, 5000)
+
+  channel.port1.onmessage = (e: any) => {
+    console.log(">>>", e.data);
+    setChats((data) => [
+      ...data,
+      sampleMessages[Math.floor(Math.random() * 2)],
+    ]);
+  };
+
+  React.useEffect(() => {
+    console.log(currentReciepient);
+  }, [currentReciepient]);
+
+  const loadState = {
+    loading,
+    toggleLoading: (key: boolean) => {
+      setLoading(() => key);
+    },
+  };
+
+  const auth = {
+    user,
+    signin: (data: LoginRequest, callback: VoidFunction) => {
+      loadState.toggleLoading(true);
+      api
+        .login(data)
+        .then((data) => {
+          api.saveToken(data.jwt);
+          setUser(data.data);
+          callback();
+        })
+        .catch((err: any) => {
+          alert(err.message);
+        })
+        .finally(() => {
+          loadState.toggleLoading(false);
+        });
+    },
+    signout: (callback: VoidFunction) => {},
+    register: (callback: VoidFunction) => {},
+  };
+
+  const dashboard = {
+    chats,
+    reciepients,
+    currentReciepient,
+    setReciepient: (reciepient: IUser) => {
+      setReciepient(reciepient);
+    },
+    getOnlineReciepients: () => {},
+    sendMessage: (message: string) => {
+      alert(message);
+    },
+    getChats: () => {},
+  };
+
+  const store = {
+    loadState,
+    dashboard,
+    auth,
+  };
+
+  return (
+    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+  );
 };
-
-export default ({ children }: { children: React.ReactNode }) => {
-  let [user, setUser] = React.useState<any>(null);
-
-  let signin = (newUser: string, callback: VoidFunction) => {
-    return fakeAuthProvider.signin(() => {
-      setUser(newUser);
-      callback();
-    });
-  };
-
-  let signout = (callback: VoidFunction) => {
-    return fakeAuthProvider.signout(() => {
-      setUser(null);
-      callback();
-    });
-  };
-
-  let value = { user, signin, signout };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+export default Provider;

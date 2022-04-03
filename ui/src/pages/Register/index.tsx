@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
+import useStore from "../../hooks/useStore";
 import { LocationState } from "../../types";
 
 const Register = () => {
   let navigate = useNavigate();
   let location = useLocation();
-  let auth = useAuth();
+  let { auth } = useStore();
 
   let from = (location.state as LocationState)?.from?.pathname || "/";
 
@@ -15,7 +15,7 @@ const Register = () => {
     let formData = new FormData(event.currentTarget);
     let username = formData.get("username") as string;
 
-    auth.signin(username, () => {
+    auth.register("dfe", () => {
       // Send them back to the page they tried to visit when they were
       // redirected to the login page. Use { replace: true } so we don't create
       // another entry in the history stack for the login page.  This means that
@@ -25,28 +25,34 @@ const Register = () => {
       navigate(from, { replace: true });
     });
   }
-    return (
-      <div className="h-vh-full w-full bg-auth abs-center-content">
-        <div className="bg-white auth view-port">
-          <h1>Create an Account</h1>
-          <div className="input">
-            <label> Email </label>
-            <input type="text" />
-          </div>
-          <div className="input">
-            <label> Password </label>
-            <input type="password" />
-          </div>
-          <div className="input">
-            <input type="checkbox"/> By checking this, you have accepted our Terms & conditions
-          </div>
-          <button className="submit"> Register </button>
-          <p className="text-center">Powered By Rex</p>
+  return (
+    <div className="h-vh-full w-full bg-auth abs-center-content">
+      <div className="bg-white auth view-port">
+        <h1>Create an Account</h1>
+        <div className="input">
+          <label> Email </label>
+          <input type="text" />
         </div>
-        <p className="text-center"><a href="/login">Click to SignIn</a></p>
-
+        <div className="input">
+          <label> Username </label>
+          <input type="text" />
+        </div>
+        <div className="input">
+          <label> Password </label>
+          <input type="password" />
+        </div>
+        <div className="input">
+          <input type="checkbox" /> By checking this, you have accepted our
+          Terms & conditions
+        </div>
+        <button className="submit"> Register </button>
+        <p className="text-center">Powered By Rex</p>
       </div>
-    );
-}
+      <p className="text-center">
+        <a href="/login">Click to SignIn</a>
+      </p>
+    </div>
+  );
+};
 
 export default Register;
