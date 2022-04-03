@@ -14,6 +14,6 @@ const Protect = ({ children }: { children: JSX.Element }) => {
   }
 
   return children;
-}
+};
 
 export default Protect;
