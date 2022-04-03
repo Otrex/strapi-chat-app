@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import api from "../api";
 import { StoreContext } from "../hooks/useStore";
-import { LoginRequest, LoginResponse, VoidFunction } from "../types";
+import { LoginRequest, VoidFunction } from "../types";
 import { IMessage, IUser } from "../types/models";
+export const channel = new MessageChannel();
 
 const sampleUser = { name: "Treasure", phoneNumber: "098765456789" };
 const sampleReciepients = [
@@ -37,6 +38,14 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   // setInterval(() => {
   //   setChats((data) => ([...data, sampleMessages[Math.floor(Math.random() * 2)]]))
   // }, 5000)
+
+  channel.port1.onmessage = (e: any) => {
+    console.log(">>>", e.data);
+    setChats((data) => [
+      ...data,
+      sampleMessages[Math.floor(Math.random() * 2)],
+    ]);
+  };
 
   React.useEffect(() => {
     console.log(currentReciepient);
@@ -79,7 +88,9 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
       setReciepient(reciepient);
     },
     getOnlineReciepients: () => {},
-    sendMessage: (message: string) => { alert(message)},
+    sendMessage: (message: string) => {
+      alert(message);
+    },
     getChats: () => {},
   };
 

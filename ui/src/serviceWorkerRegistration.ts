@@ -1,6 +1,8 @@
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
+import { channel } from "./hoc/Provider";
+
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
 // will only see deployed updates on subsequent visits to a page, after all the
@@ -26,10 +28,6 @@ type Config = {
 };
 
 // IWC (InterWorker Communicator)
-const channel = new MessageChannel();
-channel.port1.onmessage = (e: MessageEvent) => {
-  console.log(">>>", e.data);
-};
 
 const registerChannelForMain = (navigator: Navigator) => {
   navigator.serviceWorker.controller?.postMessage(
