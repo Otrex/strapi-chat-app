@@ -12,23 +12,23 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "sender": {
-      "type": "text"
-    },
-    "receiver": {
-      "type": "text"
-    },
     "message": {
       "type": "text"
     },
     "time_received": {
       "type": "datetime"
     },
-    "users_permissions_user": {
+    "sender": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "chats"
+    },
+    "receiver": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "chat"
     }
   }
 }

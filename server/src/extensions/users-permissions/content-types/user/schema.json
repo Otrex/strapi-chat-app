@@ -63,17 +63,23 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "chats": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::chat.chat",
-      "mappedBy": "users_permissions_user"
-    },
     "user_notification_key": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::user-notification-key.user-notification-key",
       "inversedBy": "users_permissions_user"
+    },
+    "chat": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::chat.chat",
+      "inversedBy": "receiver"
+    },
+    "chats": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::chat.chat",
+      "mappedBy": "sender"
     }
   }
 }
