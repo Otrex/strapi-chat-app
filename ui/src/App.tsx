@@ -6,6 +6,7 @@ import Provider from "./hoc/Provider";
 import Dashboard from "./pages/Dashboard";
 import Protect from "./components/utility/Protect";
 import Loading from "./components/pages/Loading";
+// import firebase from "./firebase";
 
 function App() {
   return (

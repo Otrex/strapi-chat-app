@@ -1,41 +1,27 @@
-var self = this;
-var mainPort = { x: 0 };
-self.addEventListener("push", (event) => {
-  console.log("port", mainPort);
-  let data;
-  if (event.data) {
-    data = event.data.json();
+importScripts('https://www.gstatic.com/firebasejs/8.2.7/firebase-app.js')
+importScripts('https://www.gstatic.com/firebasejs/8.2.7/firebase-messaging.js')
+
+
+// Initialize the Firebase app in the service worker by passing the generated config
+const firebaseConfig = {
+  apiKey: "AIzaSyCr0Hc3b-F1KgKL30s4b_X91ljaLOKrFSo",
+  authDomain: "pushnotifcation-ca5e5.firebaseapp.com",
+  projectId: "pushnotifcation-ca5e5",
+  storageBucket: "pushnotifcation-ca5e5.appspot.com",
+  messagingSenderId: "1067652254071",
+  appId: "1:1067652254071:web:ce661670a644089afa7972"
+};
+const key = "BC1mtP-qOA8vbgNMvFHe1wcvICSblPWV8IScA9DfZVTocCEFGA_kNl7zmrFG0t4VDtGnOX5PWMDGrp8Fo12XHPk"
+
+const app = firebase.initializeApp(firebaseConfig)
+
+app.messaging().getToken({ vapidKey: key })
+.then((currentToken) => {
+  if (currentToken) {
+    console.log('client token', currentToken)
+  } else {
+    console.log('No registration token available. Request permission to generate one.');
   }
-  const options = {
-    body: data.message || "new notification",
-  };
-
-  mainPort.x && mainPort.x.postMessage({ working: true });
-  event.waitUntil(
-    self.registration.showNotification(JSON.stringify(mainPort), options)
-  );
-});
-
-self.addEventListener("message", (event) => {
-  if (event && event.data.type === "MAIN_THREAD") {
-    mainPort.x = event.ports[0];
-    mainPort.x.postMessage("Excfevev");
-
-    event.waitUntil(self.registration.showNotification("connected", {}));
-  }
-});
-
-// self.addEventListener("push", (event) => {
-//   if (event.data) {
-//     try {
-//       const data = JSON.parse(event.data.json());
-//       event.waitUntil(
-//         self.registration.showNotification('new notification has been added', {
-//           body: data.message || "new notification",
-//         })
-//       );
-//     } catch (e) {
-//       console.error('push event data parse fail');
-//     }
-//   }
-// });
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+})
